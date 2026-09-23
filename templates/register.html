@@ -15,30 +15,33 @@
         </div>
 
         <div class="auth-card">
+            {% include "_auth_flash.html" %}
             <form method="POST" action="{{ url_for('register') }}">
                 <div class="form-group">
                     <label for="name">Full name</label>
                     <input type="text" id="name" name="name"
                            class="form-input" placeholder="Nitish Kumar"
+                           value="{{ form.get('name', '') }}"
                            required autofocus>
                 </div>
                 <div class="form-group">
                     <label for="email">Email address</label>
                     <input type="email" id="email" name="email"
                            class="form-input" placeholder="nitish@example.com"
+                           value="{{ form.get('email', '') }}"
                            required>
                 </div>
                 <div class="form-group">
                     <label for="password">Password</label>
                     <input type="password" id="password" name="password"
                            class="form-input" placeholder="Min. 8 characters"
-                           required>
+                           minlength="8" required>
                 </div>
                 <div class="form-group">
                     <label for="confirm_password">Confirm password</label>
                     <input type="password" id="confirm_password" name="confirm_password"
                            class="form-input" placeholder="Repeat your password"
-                           required>
+                           minlength="8" required>
                 </div>
                 <button type="submit" class="btn-submit">Create account</button>
             </form>

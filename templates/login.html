@@ -15,11 +15,13 @@
         </div>
 
         <div class="auth-card">
+            {% include "_auth_flash.html" %}
             <form method="POST" action="{{ url_for('login') }}">
                 <div class="form-group">
                     <label for="email">Email address</label>
                     <input type="email" id="email" name="email"
                            class="form-input" placeholder="nitish@example.com"
+                           value="{{ form.get('email', '') }}"
                            required autofocus>
                 </div>
                 <div class="form-group">
