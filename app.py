@@ -52,6 +52,18 @@ def _parse_date(val):
         return None
 
 
+def _is_valid_email(val):
+    if val.count("@") != 1 or any(c.isspace() for c in val):
+        return False
+    local, domain = val.split("@")
+    return (
+        bool(local)
+        and "." in domain
+        and not domain.startswith(".")
+        and not domain.endswith(".")
+    )
+
+
 def _months_ago(today, n):
     m, y = today.month - n, today.year
     while m <= 0:
@@ -82,22 +94,30 @@ def register():
 
         if not all([name, email, password, confirm_password]):
             flash("All fields are required.", "error")
-            return render_template("register.html")
+            return render_template("register.html", form=request.form)
+
+        if not _is_valid_email(email):
+            flash("Please enter a valid email address.", "error")
+            return render_template("register.html", form=request.form)
+
+        if len(password) < 8:
+            flash("Password must be at least 8 characters.", "error")
+            return render_template("register.html", form=request.form)
 
         if password != confirm_password:
             flash("Passwords do not match.", "error")
-            return render_template("register.html")
+            return render_template("register.html", form=request.form)
 
         try:
             create_user(name, email, password)
         except sqlite3.IntegrityError:
             flash("Email already registered.", "error")
-            return render_template("register.html")
+            return render_template("register.html", form=request.form)
 
         flash("Account created! Please sign in.", "success")
         return redirect(url_for("login"))
 
-    return render_template("register.html")
+    return render_template("register.html", form={})
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -111,13 +131,13 @@ def login():
         user = get_user_by_email(email)
         if not user or not check_password_hash(user["password_hash"], password):
             flash("Invalid email or password.", "error")
-            return render_template("login.html")
+            return render_template("login.html", form=request.form)
 
         session["user_id"] = user["id"]
         session["user_name"] = user["name"]
         return redirect(url_for("profile"))
 
-    return render_template("login.html")
+    return render_template("login.html", form={})
 
 
 # ------------------------------------------------------------------ #

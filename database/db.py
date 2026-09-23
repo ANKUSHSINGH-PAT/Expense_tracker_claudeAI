@@ -39,6 +39,7 @@ def init_db():
 
 
 def create_user(name, email, password):
+    email = email.strip().lower()
     conn = get_db()
     cursor = conn.execute(
         "INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?)",
@@ -51,6 +52,7 @@ def create_user(name, email, password):
 
 
 def get_user_by_email(email):
+    email = email.strip().lower()
     conn = get_db()
     user = conn.execute(
         "SELECT * FROM users WHERE email = ?", (email,)
