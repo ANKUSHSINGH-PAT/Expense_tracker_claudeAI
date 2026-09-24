@@ -185,7 +185,13 @@ def profile():
 def analytics():
     if not session.get("user_id"):
         return redirect(url_for("login"))
-    return render_template("analytics.html")
+
+    uid = session["user_id"]
+    return render_template(
+        "analytics.html",
+        stats=get_summary_stats(uid),
+        categories=get_category_breakdown(uid),
+    )
 
 
 @app.route("/expenses/add", methods=["GET", "POST"])
